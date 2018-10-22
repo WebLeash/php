@@ -1,0 +1,13 @@
+<?php
+//REPLACE THE CONTENT OF THIS ARRAY WITH REAL DATA
+$BrokerIDArray = array(
+"A01234"=>"1A",
+"A99999"=>"1B",
+"A66666"=>"1C",
+"A55555"=>"1D",
+"A44444"=>"1E",
+"A33333"=>"1F",
+"A22222"=>"1G",
+"A11111"=>"1H"
+);
+?>
