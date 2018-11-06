@@ -1,209 +1,54 @@
 <?php #this php block will be executed after the form below (see the '<div class="section3">' section) has been submitted
-$max = $_POST['MAX_FILE_SIZE'];
+//$max = $_POST['MAX_FILE_SIZE'];
 
 
 //$max= 150 * 1024; #size in Bytes, here max is 150 KBytes, works with hidden input field, see form below
 
 //includes the external file that stores SCID number as keys with corresponding Broker ID number as values; key=>value
-include 'list.php'; 
+//include 'list.php'; 
 
-$mnemonicInfo = $_POST['mnemonic']; //collects and stores the input of the 'Mnemonic)' edit box
-$systemInfo = $_POST['sys']; //collects and stores the input of the 'System' drop down list
-$lobInfo = $_POST['lob']; //collects and stores the input of the 'Line of business' drop down list 
-$emailInfo = $_POST['email']; //collects and stores the input of the 'User email' edit box
-$scidInfo = $_POST['scid']; //collects and stores the input of the 'SCID' edit box    //testing
+$bu = $_POST['bu']; //collects and stores the input of the 'Mnemonic)' edit box
+$dept = $_POST['dept']; //collects and stores the input of the 'System' drop down list
+$owner = $_POST['owner']; //collects and stores the input of the 'Line of business' drop down list 
+$type = $_POST['type']; //collects and stores the input of the 'User email' edit box
+$country = $_POST['country']; //collects and stores the input of the 'SCID' edit box    //testing
+$private = $_POST['private']; //collects and stores the input of the 'SCID' edit box    //testing
+$multi = $_POST['multi']; //collects and stores the input of the 'SCID' edit box    //testing
+$cn = $_POST['cn']; //collects and stores the input of the 'SCID' edit box    //testing
+$san = $_POST['san']; //collects and stores the input of the 'SCID' edit box    //testing
+$der = $_POST['der']; //collects and stores the input of the 'SCID' edit box    //testing
+$pem = $_POST['pem']; //collects and stores the input of the 'SCID' edit box    //testing
+$csr = $_POST['csr']; //collects and stores the input of the 'SCID' edit box    //testing
+$base = $_POST['base']; //collects and stores the input of the 'SCID' edit box    //testing
 
 
-function missingMandatoryData($a, $b, $c, $d)
+function missingMandatoryData($a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k)
 {
-  if (($a == '') || ($b == '') || ($c == '') || ($d == ''))  //if any of these variables is empty...
+  if (($a == '') || ($b == '') || ($c == '') || ($d == '') || ($e == ' ') || ($f == ' ' ) || ($g == ' ') || ($h == ' ' ) || ($i == ' ' ) || ($j == ' ') ||( $k == ' ' ))  //if any of these variables is empty...
   {
     return false;
 	
   }
     else 
-      {
+    {
          return true;
-	   }
+   }
 }
 
 
    
-   //if the SCID edit box is NOT empty (if user provided a scid)..
-   //AND..
-   //if the BrokerIDArray returns a matching ID .. 
- if(( $scidInfo != '')  &&  ($BrokerIDArray[$scidInfo] != '')) 
-   {
-	 //fetch the value of the Broker ID storred in the $BrokerIDArray, 
-	 //by using the SCID key stored in $scidInfo and assign it to $bi
-	 $bi = $BrokerIDArray[$scidInfo]; 
-   }
-     else //..or the broker id '$bi' and scid '$scidInfo' variables 
-	        //are assigned default SSP values S00007 and99
-       {
-		   $bi = "99";  //broker id 
-		   $scidInfo = "S00007";  //scid
-	   }  
-	   
-   
-
 ///////////////////////// Do the following on submit.. /////////////////////////
 
 //'upload' - name of the submit button in the form, 
 //'isset' — determines if a variable is set and is not NULL
-//if the abiq DOES NOT error due to error 4..
-if (isset($_POST['upload']) &&  ($_FILES['filename1']['error'] != 4) 	
-	                                 && missingMandatoryData($mnemonicInfo, $systemInfo, $lobInfo, $emailInfo))  
-			
-	
+if(missingMandatoryData($bu, $dept, $owner,$type, $countryi, $private, $multi, $cn, $san, $der, $pem))  
 {
-	//Path to the 'upload' folder, where the uploaded files are eventually stored 
-	$destination ='/var/www/html/stuff' . '/uploads/'; //'__DIR__' - constant that stores absolute path to the current folder (where the php file is), concatenated with the relative path
-	
-	//Check if the 1st file was uploaded successfully and if so, move the 1st file to its final destination
-	if ($_FILES['filename1']['error'] == 0) 
-	{// if there was no error while uploading the file
-	
-		//move the uploaded file from the temporary directory to /uploads
-		//the file name will have the following info added to its name; SCID, Broker ID, Mnemonic, LOB, System, Type of file (ABIQ) + file extension
-        $result1 = move_uploaded_file($_FILES['filename1']['tmp_name'], $destination . $scidInfo .'_'. $bi .'_'. $mnemonicInfo .'_'. $lobInfo .'_'. $systemInfo .'_ABIQ_'. $emailInfo . '.FLE');
-		//'filename' - the input filed in the form
-		//'tmp_name' - subarray storing the temporary name of the submitted file
-		// $destination - where the files will be moved
-	    //'$_FILES['filename']['name']' - 'name' - the original file name, we could append this above to the 'moved file' to keep it original name, but we are renaming it.
-		//'move_uploaded_file' - more secure thatn 'copy' as it only moved genuinely uploaded files
-		
-		if($result1) 
-		  { //if true..if the file was successfully uploaded
-	         $message1 = $_FILES['filename1']['name'] . '  - WAS UPLOADED SUCCESSFULLY.'; // 'name' - the original file name
-             $scriptToExecute_1 = true;
-		   } 
-		   else 
-		     {//..otherwise output correct error
-		        $message1 = 'Sorry there was a problem uploading ' . $_FILES['filename1']['name']; 
-		     }    
-	} 
-	 else 
-	  {	
-     		//Dsplays meaningful error to the user after the Submit button is clicked;
-	          switch($_FILES['filename1']['error'])  //'filename' - the input filed in the form, 'error' - section of the array that stores error codes
-	          {
-		        // case 0: - taken care of in the 'if($result)' condition above
-                    case 1:
-		              $message1 = $_FILES['filename1']['name'] . ' - is to big to upload.'; 
-		              break;
-		            case 2:
-		              $message1 = $_FILES['filename1']['name'] . ' - IS TO BIG TO UPLOAD.'; 
-		              break;
-		             case 3:
-		              $message1 = $_FILES['filename1']['name'] . ' - WAS ONLY PARTIALLY UPLOADED.'; 
-		              break;
-		            case 4:
-		              $message1 = ' NO FILE SELECTED.'; 
-		              break;
-		            case 6:
-		              $message1 = ' MISSING A TEMPORARY FOLDER.'; 
-		              break;
-		            case 7:
-		              $message1 = ' FAILED TO WRITE FILE TO DISK.'; 
-		              break;
-                    case 8:
-		              $message1 = ' A PHP EXTENSION STOPPED THE ' . $_FILES['filename1']['name'] . ' FILE UPLOAD.'; 
-		              break;
-		            default:
-		              $message1 = ' SORRY THERE WAS A PROBLEM UPLOADING - ' . $_FILES['filename1']['name'];
-		              break;
-	           }	  
-	  }
 
-//Check if the 2nd file was uploaded successfully and if so, move the 2nd file to its final destination
-	//if the abiq (1st file) DOES NOT error due to error 3, 2 or 1 ..
-	if ($_FILES['filename2']['error'] == 0 &&  ($_FILES['filename1']['error'] != 1) 
-                                                      &&  ($_FILES['filename1']['error'] != 2) 
-							                     	  &&  ($_FILES['filename1']['error'] != 3) )
-
-
-	{// if there was no error while uploading the file
-	
-		//move the uploaded file from the temporary directory to /uploads
-		//the file name will have the following info added to its name; SCID, Broker ID, Mnemonic, LOB, System, Type of file (OUT)+ file extension
-        $result2 = move_uploaded_file($_FILES['filename2']['tmp_name'], $destination . $scidInfo .'_'. $bi .'_'. $mnemonicInfo .'_'. $lobInfo .'_'. $systemInfo .'_OUT_'. $emailInfo . '.dat');
-		//'filename' - the input filed in the form
-		//'tmp_name' - subarray storing the temporary name of the submitted file
-		// $destination - where the files will be moved
-	    //'$_FILES['filename']['name']' - 'name' - the original file name, we could append this above to the 'moved file' to keep it original name, but we are renaming it.
-		//'move_uploaded_file' - more secure thatn 'copy' as it only moved genuinely uploaded files
-		
-		
-		
-		if($result2) 
-		  { //if true..if the file was successfully uploaded
-	         		$message2 = $_FILES['filename2']['name'] . ' - WAS UPLOADED SUCCESSFULLY.'; // 'name' - the original file name
-	         		$scriptToExecute_2 = true;
-	 			#shell_exec("/var/www/html/TCO_SOFTWARE/START.sh");
-		  } 
-		   else 
-		     {//..otherwise output correct error
-		        $message2 = 'Sorry there was a problem uploading ' . $_FILES['filename2']['name'];
-		     }  
-	 
-	} 
-	 else 
-	  {	
-     		//Dsplays meaningful error to the user after the Submit button is clicked;
-	          switch($_FILES['filename2']['error'])  //'filename' - the input filed in the form, 'error' - section of the array that stores error codes
-	          {
-		        // case 0: - taken care of in the 'if($result)' condition above
-                    case 1:
-		              $message2 = $_FILES['filename2']['name'] . ' - is to big to upload.'; 
-		              break;
-		            case 2:
-		              $message2 = $_FILES['filename2']['name'] . ' - IS TO BIG TO UPLOAD.'; 
-		              break;
-		            case 3:
-		              $message2 = $_FILES['filename2']['name'] . ' - WAS ONLY PARTIALLY UPLOADED.'; 
-		              break;
-		            case 4:
-		              $message2 = ' NO FILE SELECTED.'; 
-		              break;
-		            case 6:
-		              $message2 = ' MISSING A TEMPORARY FOLDER.'; 
-		              break;
-		            case 7:
-		              $message2 = ' FAILED TO WRITE FILE TO DISK.'; 
-		              break;
-                    case 8:
-		              $message2 = ' A PHP EXTENSION STOPPED THE ' . $_FILES['filename2']['name'] . ' FILE UPLOAD.'; 
-		              break;
-		            default:
-		              $message2 = ' SORRY THERE WAS A PROBLEM UPLOADING - ' . $_FILES['filename2']['name'];
-		              break;
-	           }	  
-		  }
-
-		
-	//and some more info about the errors, just in case.. :-)
-	/* Error Codes;
-	UPLOAD_ERR_OK - Value: 0; There is no error, the file uploaded with success.
-	UPLOAD_ERR_INI_SIZE - Value: 1; The uploaded file exceeds the upload_max_filesize directive in php.ini.
-	UPLOAD_ERR_FORM_SIZE - Value: 2; The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.
-    UPLOAD_ERR_PARTIAL - Value: 3; The uploaded file was only partially uploaded.
-	UPLOAD_ERR_NO_FILE - Value: 4; No file was uploaded.
-	UPLOAD_ERR_NO_TMP_DIR - Value: 6; Missing a temporary folder. Introduced in PHP 5.0.3.
-	UPLOAD_ERR_CANT_WRITE - Value: 7; Failed to write file to disk. Introduced in PHP 5.1.0.
-	UPLOAD_ERR_EXTENSION - Value: 8; A PHP extension stopped the file upload. PHP does not provide a way to ascertain which extension 
-	 caused the file upload to stop; examining the list of loaded extensions with phpinfo() may help. Introduced in PHP 5.2.0.
-	*/
 
  $displayData = true;	//if all mandatory data is provided
  
- if ($scriptToExecute_1 && $scriptToExecute_1) 
- {
-	# shell_exec("/var/www/somePerlstuff.pl");
-	shell_exec("/var/www/html/TCO_SOFTWARE/START.sh");
-	$output="Engine Results Below:";
-	# shell_exec("/home/tco/1.sh");
- }
+//	shell_exec("/var/www/html/TCO_SOFTWARE/START.sh");
+//	$output="Engine Results Below:";
 }
 
 
@@ -215,7 +60,7 @@ if (isset($_POST['upload']) &&  ($_FILES['filename1']['error'] != 4)
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TCO Generator</title>
+<title>GCM (Venafi) Internal Certificate Request</title>
 
 <link href="tcogen.css" rel="stylesheet" type="text/css">  
 <style>
@@ -235,11 +80,11 @@ by the php code located in this file above <!doctype html> tag
 -->
 <!------------------------- START of the FORM  --------------------------->
 <div class="container">
-<h1>TCO GENERATOR </h1>
+<h1>GCM (Venaif) Internal Certificate Request</h1>
 <hr>
 
 
-<form action="http://10.80.11.43/stuff/form4_upload.php" > 
+<form action="http://xps/index.php" > 
 
 <h3>Confirmation; <?php  ?></h3>
 
@@ -248,63 +93,45 @@ if($displayData) //if all mandatory data was provided
 {
 #echo $mainFile;
 
-echo "SCID = " . $scidInfo;
+echo "BU = " . $bu;
 echo "<br>";
 
-echo "Broker ID = " . $bi; 
+echo "Dept = " . $dept; 
 echo "<br>";
 
-echo "Mnemonic = " . $mnemonicInfo; 
+echo "owner = " . $owner; 
 echo "<br>";
 
-echo "System = " . $systemInfo ; 
+echo "type = " . $type ; 
 echo "<br>";
 
-echo "LOB = " . $lobInfo;
+echo "Country = " . $country;
 echo "<br>";
 
-echo "Email = " . $emailInfo; 
+echo "private = " . $private; 
 echo "<br><br>";
 
-echo "OUTPUT = " . $output; 
+echo "multu = " . $multi; 
+echo "CN = " . $cn; 
+echo "SAN = " . $san; 
+echo "DER = " . $der; 
+echo "pem = " . $pem; 
+echo "csr = " . $csr; 
+echo "base = " . $base; 
 echo "<br><br>";
-
-$fh = fopen('/tmp/out.eng','r');
-while ($line = fgets($fh))
-{
-	echo ("<b>");
-	echo($line);
-	echo ("<br>");
 }
-
-// displays the upload error messages as specified in the php block at the top, see switch section
- if ($message1) //if '$message1' string empty nothing will be displayed, if not empty it evaluates to true and displays the error string
+else
 {
-	echo "<b> ABIQ file ;</b><br>  " . $message1;
-	echo "<br><br>";
-} 
- // displays the upload error messages as specified in the php block at the top, see switch section
- if ($message2) //if '$message2' string empty nothing will be displayed, if not empty it evaluates to true and displays the error string
-{
-	echo "<b>Output file ;</b><br>  " . $message2;
-	echo "<br><br><br>";
-} 
-
-}
-else 
-	
+	if( $bu == '')
 	{
-		echo "No action taken, because <b>some mandatory data was missing</b><br><br>";
-		echo "Please go back and try again.<br><br>";
-	
+		echo "missing data BU";
 	}
-
+}
 ?>
 
+
 <hr>
-<p><!-- submit - section of the form 
-'value' - caption of the button
-'name' - name of the submit button-->
+<p>
 <input type="submit" name="goback" value="Go back" >
 
 </p>
@@ -312,11 +139,6 @@ else
 
 </form> 
 
-<!------------------------- END of the FORM  --------------------------->
-
-
 </body>
 </html>
-
-
 
