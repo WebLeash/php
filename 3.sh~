@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+while getopts ":p:l:t:" option; do
+    case "${option}" in
+      p)
+         p=${OPTARG}
+          ;;
+      l)
+          l=${OPTARG}
+              ;;
+      t)
+          t=${OPTARG}
+	  ;;
+       *)
+          usage
+	  ;;
+    esac
+done
+
+echo "p=$p l=$l t=$t"
