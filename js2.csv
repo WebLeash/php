@@ -1,0 +1,55 @@
+{
+  "u_business_application_name": "String:Optional",
+  "u_business_application_id": "Integer:Required",
+  "u_business_application_version": "String:Required",
+  "u_application_platform_id": "String:Optional",
+  "u_application_platform_version": "String: Optional",
+  "u_environment": "String:Required",
+  "u_deployment_date_time": "DateTime:Required",
+  "u_deployment_user": "String:Optional",
+  "u_change_ticket_url": " String:Optional",
+  "u_deployment_server": "String:Optional",
+  "u_deployment_targets": [
+    {
+      "u_bios_serial_number": "String:Required",
+      "u_hostname": "String:Optional",
+      "u_domain_name": "String:Optional",
+      "u_mac_address": "String:Optional",
+      "u_application_services": [
+        {
+          "u_running_process_name": "String:Required",
+          "u_running_process_description": "String:Optional",
+          "u_tcp_ip_port": "Integer:Optional"
+        }
+      ],
+      "u_application_artifacts": [
+        {
+          "u_file_path": "String:Required",
+          "u_file_name": "String:Required",
+          "u_file_size_bytes": "Integer:Required",
+          "u_signature": "String:Optional",
+          "u_file_description": "String:Optional"
+   "u_source_location_url”: "String:Optional"
+        }
+      ]
+    }
+  ],
+  "u_system_dependencies": [
+    {
+      "u_name": "String:Required",
+      "u_version": "String:Optional",
+      "u_server_fqdn": "String:Required",
+      "u_server_ip_address": "String:Required",
+      "u_port": "Integer:Optional",
+      "u_install_directory": "String:Optional"
+    }
+  ],
+  "u_application_dependencies": [
+    {
+      "u_group_id": "String:Optional",
+      "u_name": "String:Required",
+      "u_version": "String:Required",
+      "u_source_location_url": "String:Optional"
+    }
+  ]
+}
